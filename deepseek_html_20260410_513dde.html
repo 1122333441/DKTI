@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>DKTI人格测试 · 你是哪款借贷奇葩？</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #fff2e2 0%, #ffe2c4 100%);
+      font-family: 'Segoe UI', 'PingFang SC', 'Comic Neue', system-ui, 'BlinkMacSystemFont', -apple-system, sans-serif;
+      color: #2d2a24;
+      min-height: 100vh;
+      padding: 24px 20px 50px;
+    }
+
+    .app-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .glass-card {
+      background: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid #ffe5c2;
+      transition: all 0.2s ease;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeScale 0.25s ease;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeScale {
+      0% { opacity: 0; transform: scale(0.97); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .hero-wrap {
+      padding: 56px 32px 64px;
+      text-align: center;
+      background: #fffef9;
+      border-radius: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-wrap::after {
+      content: "💸🧾😂";
+      font-size: 180px;
+      opacity: 0.07;
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      pointer-events: none;
+    }
+    h1 {
+      font-size: clamp(38px, 8vw, 68px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #c4641a, #f5a442, #e07a2c);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.01em;
+    }
+    .subhead {
+      font-size: 1.1rem;
+      color: #b97f44;
+      max-width: 550px;
+      margin: 12px auto 0;
+    }
+    .btn-primary {
+      background: linear-gradient(100deg, #f09b42, #e67e22);
+      border: none;
+      color: white;
+      padding: 14px 38px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-radius: 60px;
+      box-shadow: 0 12px 20px rgba(230, 126, 34, 0.3);
+      cursor: pointer;
+      transition: 0.2s;
+      border: 0;
+    }
+    .btn-primary:hover { transform: translateY(-3px); filter: brightness(1.02); box-shadow: 0 18px 28px rgba(230,126,34,0.3); }
+    .btn-secondary {
+      background: #fff3e8;
+      border: 1px solid #ffdbb5;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #c4621a;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .btn-secondary:hover { background: #ffe7d6; }
+
+    .test-container {
+      padding: 28px 30px;
+    }
+    .progress-area {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .progress-bar-bg {
+      flex: 1;
+      height: 12px;
+      background: #f0e0cf;
+      border-radius: 30px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f39c12, #e67e22);
+      border-radius: 30px;
+      transition: width 0.25s;
+    }
+    .counter {
+      font-weight: 700;
+      background: #fff0e0;
+      padding: 4px 16px;
+      border-radius: 40px;
+      color: #b95f1a;
+    }
+
+    .question-item {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      border: 1px solid #ffe0b5;
+      transition: 0.1s;
+    }
+    .q-badge {
+      display: inline-block;
+      background: #fff0e0;
+      border-radius: 50px;
+      padding: 4px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #bc651f;
+      margin-bottom: 12px;
+    }
+    .q-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 8px 0 18px;
+      line-height: 1.4;
+    }
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fefaf5;
+      padding: 10px 18px;
+      border-radius: 50px;
+      border: 1px solid #fbe2c5;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .option-row:hover {
+      background: #fff4ea;
+      border-color: #e6bc8c;
+    }
+    input[type="radio"] {
+      accent-color: #e67e22;
+      width: 18px;
+      height: 18px;
+    }
+    .action-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 28px;
+      margin-bottom: 30px;
+    }
+    .result-card {
+      background: white;
+      border-radius: 34px;
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px solid #ffe0b5;
+    }
+    .result-emoji {
+      font-size: 80px;
+    }
+    .type-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #c4621a;
+      margin: 12px 0 8px;
+    }
+    .match-tag {
+      background: #fff0e0;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      margin: 12px 0;
+    }
+    .desc-section, .dimension-box, .advice-box {
+      background: white;
+      border-radius: 32px;
+      padding: 24px;
+      margin-top: 24px;
+      border: 1px solid #ffe0b5;
+    }
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dim-item {
+      border-bottom: 1px dashed #ffe0b5;
+      padding: 12px 0;
+    }
+    .dim-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .dim-bar {
+      background: #f0e2d2;
+      height: 10px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .dim-fill {
+      background: #e67e22;
+      height: 10px;
+      width: 0%;
+      border-radius: 20px;
+    }
+    .dim-caption {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #b97f44;
+    }
+    .result-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    details {
+      margin-top: 28px;
+      background: #fffbf4;
+      border-radius: 32px;
+      padding: 16px 20px;
+      border: 1px solid #ffe0b5;
+      cursor: pointer;
+    }
+    summary {
+      font-weight: 700;
+      color: #c4621a;
+    }
+    footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #cb8b54;
+    }
+
+    .financing-advisor {
+      margin-top: 20px;
+      background: #fffaf2;
+      border-radius: 28px;
+      padding: 20px 20px 18px;
+      text-align: center;
+      border: 1px solid #ffe0b5;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+    .advisor-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #e67e22, #f5a442);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 14px;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .advisor-title:before {
+      content: "💼";
+      font-size: 1.4rem;
+      background: none;
+      -webkit-background-clip: unset;
+      color: #e67e22;
+    }
+    .advisor-img {
+      max-width: 100%;
+      border-radius: 28px;
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+      display: block;
+      margin: 0 auto;
+      border: 1px solid #ffd8a5;
+    }
+    .advisor-img:hover {
+      transform: scale(1.01);
+    }
+    @media (max-width: 700px) {
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+      .test-container {
+        padding: 20px;
+      }
+      .advisor-title {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- 首页 intro -->
+  <div id="introScreen" class="screen active">
+    <div class="glass-card hero-wrap">
+      <h1>💰 测测你在金融界是什么人格</h1>
+      <div class="subhead">你是「画饼仙人」还是「暴躁老哥」？<br>测完笑到打滚，顺便认清自己的借贷脑回路</div>
+      <div style="margin-top: 38px;"><button id="startTestBtn" class="btn-primary">🚀 测测我的贷款人设 🚀</button></div>
+      <footer>⚠️ 纯属娱乐 · 如有雷同 那你确实该还钱了</footer>
+    </div>
+  </div>
+
+  <!-- 测试页 -->
+  <div id="testScreen" class="screen">
+    <div class="glass-card test-container">
+      <div class="progress-area">
+        <div class="progress-bar-bg"><div id="testProgressFill" class="progress-fill"></div></div>
+        <div class="counter" id="testCounter">0 / 12</div>
+      </div>
+      <div id="questionsDynamicArea"></div>
+      <div class="action-footer">
+        <span id="testHintMsg" style="color:#b97f44;">🎭 诚实作答，反正又不放款</span>
+        <div style="display: flex; gap: 12px;">
+          <button id="backHomeBtn" class="btn-secondary">🏠 返回首页</button>
+          <button id="submitResultBtn" class="btn-primary" disabled>✨ 揭晓贷款人格 ✨</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果页 -->
+  <div id="resultScreen" class="screen">
+    <div class="glass-card" style="padding: 30px;">
+      <div class="result-grid">
+        <div class="result-card">
+          <div id="resultBigEmoji" class="result-emoji">🤡</div>
+          <div style="font-size: 14px; color:#b97f44;" id="resultPosterLine">贷款界泥石流</div>
+        </div>
+        <div class="result-card" style="text-align: left;">
+          <div style="color:#b97f44;">🏷️ 你的贷款人格代码</div>
+          <div id="resultFullName" class="type-title">画饼仙人</div>
+          <div id="resultMatchBadge" class="match-tag">匹配度 96% · 离谱但合理</div>
+          <div id="resultTagline" style="font-style: italic; color:#a3622a;">“下个月一定还，先批200万”</div>
+        </div>
+      </div>
+      <div class="desc-section">
+        <h3>📢 贷款人设 · 深度解剖</h3>
+        <p id="resultDescText"></p>
+      </div>
+      <div class="dimension-box">
+        <h3>🎭 你的贷款四维指数 (瞎编的)</h3>
+        <div id="dimensionsList"></div>
+      </div>
+      <div class="advice-box">
+        <h3>💸 给此类型客户的放款建议（胡说版）</h3>
+        <p id="funnyAdviceText"></p>
+        <!-- 专业融资老师引导模块 (包含标题 + 图片) -->
+        <div class="financing-advisor">
+          <div class="advisor-title">📞 若需专业贷款建议，欢迎添加专业融资顾问</div>
+          <img class="advisor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23fff4e8' rx='24'/%3E%3Ctext x='50%25' y='45%25' font-size='26' font-family='system-ui, PingFang SC, Segoe UI' fill='%23c4621a' text-anchor='middle' font-weight='bold'%3E💼 融资顾问%3C/text%3E%3Ctext x='50%25' y='70%25' font-size='18' fill='%23b97f44' text-anchor='middle'%3E微信号: LMY521034 ｜ 24h在线答疑%3C/text%3E%3Ctext x='50%25' y='88%25' font-size='13' fill='%23e68a2e' text-anchor='middle'%3E⚠️ 纯属娱乐展示 · 理性借贷%3C/text%3E%3C/svg%3E"
+               alt="专业融资顾问名片"
+               style="width:100%; max-width:560px; margin-top: 6px;">
+          <div style="font-size: 12px; color:#b97f44; margin-top: 12px;">🔹 扫码/添加好友，获取“胡说版”贷款避坑指南 🔹</div>
+        </div>
+      </div>
+      <details>
+        <summary>🤣 关于本测试的真相</summary>
+        <div style="padding: 12px 8px 8px;">
+          <p>本测试由被客户气到转行的前信贷员开发，结合MBTI框架+贷款行业血泪史。所有人格均源自真实案例，如有冒犯，那说的就是你。请勿用于风控模型，否则贷款部会集体离职。</p>
+          <p>⚠️ 友情提示：按时还款，远离催收，别当老赖艺术家。</p>
+        </div>
+      </details>
+      <div class="result-actions">
+        <button id="restartFromResult" class="btn-secondary">🔄 重新测试</button>
+        <button id="goHomeFromResult" class="btn-primary">🐶 回到首页</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----- 贷款人格库 (16种爆笑人设) -----
+  const PERSONALITIES = [
+    { code: "BIG-P", name: "画饼仙人", emoji: "🥞", tagline: "下个月业绩翻倍，先批500万", desc: "你嘴里永远有做不完的大生意，微信收藏夹里全是‘商业计划书’.jpg。口头禅：‘我这项目风口上的猪，就差一笔启动资金。’ 银行经理听到你的名字就开始胃疼。", advice: "建议先去工地搬砖攒个首付，或者去路边摊学习烙饼技术。" },
+    { code: "ANXIOUS", name: "暴躁老哥", emoji: "🤬", tagline: "审批三天没下来我就投诉银保监会", desc: "征信查询次数比吃饭还多，每次贷款被拒都要写小作文痛骂风控。你坚信自己只是‘暂时性资金紧张’，但实际上紧张的是信贷员的血压。", advice: "养征信半年，卸载所有网贷APP，先把花呗还了再吼。" },
+    { code: "GHOST", name: "暴富幻想家", emoji: "👻", tagline: "申请完贷款就换号，主打失联", desc: "你申请时填的紧急联系人是你自己另一个手机号。贷款到账后仿佛从未存在过，催收电话打过来你反问‘你谁啊？’ 堪称金融界的都市传说。", advice: "建议改行做特工，或者直接去缅甸搞诈骗，别嚯嚯正经金融机构。" },
+    { code: "DRAMA", name: "苦情影帝", emoji: "🎭", tagline: "我妈住院/老婆跑了/猫得癌症了", desc: "你有一百个版本的悲惨故事，每次逾期理由都充满戏剧张力。信贷员听完都流泪，但一查征信发现你同时给六个女主播刷火箭。", advice: "去横店跑龙套比贷款有前途，真的。" },
+    { code: "GOD", name: "银行是我爹", emoji: "🙏", tagline: "利率低到1%我就贷一个亿", desc: "你天天研究央行降准，总觉得银行求着你借钱。实际连信用卡都逾期过，但依然觉得‘我是优质客户，你们不识货’。", advice: "醒醒，工头喊你搬砖了。" },
+    { code: "XIAOCHOU", name: "嘴炮天花板", emoji: "🎪", tagline: "凭本事借的钱为什么要还", desc: "你混迹各种反催收群，学习‘强制上岸’108式。坚信负债者联盟才是正义，债主才是恶龙。名言：'我凭本事借的钱，你也凭本事要回去啊'。", advice: "建议背诵刑法第193条贷款诈骗罪，早日自首。" },
+    { code: "LAZY", name: "摆烂显眼包", emoji: "🛌", tagline: "能批就批，不批拉倒", desc: "你申请贷款就像买彩票，填表都嫌累。额度多少无所谓，反正你也不打算还。催收电话来了你慢悠悠说‘嗯，知道了，下次一定’。", advice: "建议直接注销身份证，重启人生。" },
+    { code: "FOOL", name: "纯爱战士·贷款版", emoji: "💔", tagline: "为爱借贷，人财两空", desc: "你借钱给网恋对象/前女友/兄弟，结果人跑了贷款你扛。征信报告上全是别人的消费记录，你还在想‘ta是不是有苦衷’。", advice: "去法院起诉比贷款靠谱，或者换个脑子。" },
+    { code: "BOSS", name: "霸道乞丐", emoji: "👔", tagline: "我公司马上纳斯达克上市，就差50万", desc: "你朋友圈全是豪车方向盘，实际开的是共享单车。张口闭口几千万流水，一查银行余额只剩58块。信贷员：您这饼比山东煎饼还大。", advice: "闲鱼卖PPT教程致富吧。" },
+    { code: "MUM", name: "大冤种", emoji: "😇", tagline: "朋友找我担保我必须帮", desc: "你给七大姑八大姨担保了八百次，自己急需用钱时没人鸟你。征信上全是别人的债务，你还在自我感动‘我真是个讲义气的人’。", advice: "学会说‘不’，或者直接断绝亲戚关系。" },
+    { code: "WTF", name: "美颜大师", emoji: "📸", tagline: "P图技术比PS老师还强", desc: "你的工资流水比珠峰还高，营业执照注册资金999亿。客户经理一看材料，当场拨打110。", advice: "建议去广告公司当美工，实现人生价值。" },
+    { code: "CRYING", name: "哭穷专业户", emoji: "😭", tagline: "银行都是吸血鬼，我就晚还三天", desc: "每次逾期你都说‘银行太黑心，就不该收利息’。但你买iPhone15 pro max的时候可没嫌贵。道德绑架十级学者。", advice: "去寺庙出家吧，六根清净不用贷款。" },
+    { code: "GAMBLE", name: "梭哈老哥", emoji: "🎲", tagline: "赢了会所嫩模，输了下海干活", desc: "你贷款不是为了经营，是为了冲币圈/赌球/炒鞋。朋友圈天天发‘人生能有几回搏’，征信报告天天搏到逾期。", advice: "澳门赌场欢迎您，别连累银行。" },
+    { code: "SECRET", name: "谜语人", emoji: "🕵️", tagline: "别问，问就是周转", desc: "你申请贷款时用途永远写‘资金周转’，但实际你也不知道自己要干嘛。钱到账就消失了，像魔法。", advice: "建议去霍格沃茨学理财。" },
+    { code: "DRUNK", name: "酒桌战神", emoji: "🍻", tagline: "我跟行长喝过酒，这额度必须给", desc: "你的人生巅峰都在酒桌上，贷款全靠‘我认识XXX’。实际行长连你姓啥都不知道，但你深信江湖地位。", advice: "少喝点，伤肝。" },
+    { code: "HOPE", name: "拒绝emo", emoji: "🌈", tagline: "拒绝第99次，第100次一定会过", desc: "你已经被拒到麻木，但依然相信下一家银行会给你放款。征信查询次数突破三位数，你还在说‘再试一次’。", advice: "买彩票比贷款靠谱，至少两块钱能买个希望。" }
+  ];
+
+  // ----- 12道爆笑题目 (每个选项对应特质增量)-----
+  const RAW_QUESTIONS = [
+    { text: "客户经理问你贷款用途，你会怎么回？", options: [
+        { label: "我有一个颠覆行业的项目，就差启动资金（配个商业计划书表情）", traits: { "BIG-P": 3, "BOSS": 2 } },
+        { label: "别废话，给我批就行，问那么多干嘛", traits: { "ANXIOUS": 3, "WTF": 1 } },
+        { label: "呜呜呜我妈住院急用钱（眼角含泪）", traits: { "DRAMA": 4, "CRYING": 2 } },
+        { label: "周转，懂？不懂拉倒", traits: { "SECRET": 3, "GHOST": 1 } }
+    ] },
+    { text: "接到催收电话的第一反应？", options: [
+        { label: "你谁啊？打错了（挂断）", traits: { "GHOST": 4, "XIAOCHOU": 2 } },
+        { label: "我凭本事借的，凭啥还？", traits: { "XIAOCHOU": 5, "GAMBLE": 1 } },
+        { label: "好的好的，下周一定（然后永远下周）", traits: { "LAZY": 3, "HOPE": 2 } },
+        { label: "我要去投诉你们暴力催收！", traits: { "ANXIOUS": 4, "DRAMA": 2 } }
+    ] },
+    { text: "征信查询次数已经爆了，你会？", options: [
+        { label: "继续冲，总有一个瞎了眼的银行", traits: { "HOPE": 4, "GOD": 2 } },
+        { label: "找中介包装资料，P一下流水", traits: { "WTF": 5, "BOSS": 1 } },
+        { label: "骂银行不识货，我是优质客户", traits: { "GOD": 4, "ANXIOUS": 2 } },
+        { label: "躺平，爱咋咋地", traits: { "LAZY": 4, "FOOL": 1 } }
+    ] },
+    { text: "朋友找你做担保，你会？", options: [
+        { label: "义不容辞！兄弟情值千金", traits: { "MUM": 5, "FOOL": 2 } },
+        { label: "滚，我自己征信都花了", traits: { "ANXIOUS": 2, "BOSS": 2 } },
+        { label: "可以，但你先给我担保", traits: { "SECRET": 3, "DRUNK": 1 } },
+        { label: "我要先喝顿酒商量一下", traits: { "DRUNK": 4, "BIG-P": 1 } }
+    ] },
+    { text: "你的朋友圈画风一般是？", options: [
+        { label: "喜提和谐号/喜提航母（配图网图）", traits: { "BOSS": 4, "BIG-P": 3 } },
+        { label: "深夜emo，人生好难，负债累累", traits: { "DRAMA": 4, "CRYING": 3 } },
+        { label: "转发‘欠债的都是大爷’‘凭本事借钱’", traits: { "XIAOCHOU": 5, "LAZY": 1 } },
+        { label: "晒各种投资暴富截图（实际模拟盘）", traits: { "GAMBLE": 4, "WTF": 2 } }
+    ] },
+    { text: "贷款到账第一时间你会？", options: [
+        { label: "梭哈！all in 狗狗币", traits: { "GAMBLE": 5, "HOPE": 1 } },
+        { label: "给网恋对象清空购物车", traits: { "FOOL": 5, "DRAMA": 1 } },
+        { label: "还别的贷款（以贷养贷王者）", traits: { "SECRET": 3, "ANXIOUS": 2 } },
+        { label: "换手机号，人间蒸发", traits: { "GHOST": 5, "XIAOCHOU": 2 } }
+    ] },
+    { text: "你觉得银行拒贷的最大原因？", options: [
+        { label: "银行没眼光，不识千里马", traits: { "GOD": 4, "BOSS": 3 } },
+        { label: "社会不公，针对我", traits: { "CRYING": 4, "ANXIOUS": 2 } },
+        { label: "嗯……可能是我征信花了？不，是他们的问题", traits: { "HOPE": 3, "LAZY": 2 } },
+        { label: "我压根就没打算还，当然不批", traits: { "XIAOCHOU": 5, "GHOST": 2 } }
+    ] },
+    { text: "朋友欠你5000块不还，你会？", options: [
+        { label: "再借他1万，凑个整", traits: { "MUM": 4, "FOOL": 4 } },
+        { label: "天天发朋友圈内涵他", traits: { "DRAMA": 3, "ANXIOUS": 2 } },
+        { label: "算了，就当喂狗了", traits: { "LAZY": 3, "SECRET": 1 } },
+        { label: "找催收公司搞他", traits: { "XIAOCHOU": 2, "BOSS": 2 } }
+    ] },
+    { text: "你理想的贷款利率是？", options: [
+        { label: "负利率！银行倒贴我钱", traits: { "GOD": 5, "BIG-P": 2 } },
+        { label: "无息最好，本金我都不想还", traits: { "XIAOCHOU": 4, "LAZY": 2 } },
+        { label: "只要给批，利率无所谓", traits: { "HOPE": 3, "GAMBLE": 2 } },
+        { label: "比网贷低就行，要求不高", traits: { "FOOL": 2, "MUM": 2 } }
+    ] },
+    { text: "银行让你补充材料，你内心真实想法？", options: [
+        { label: "烦死了，直接拒我行不行", traits: { "ANXIOUS": 4, "WTF": 2 } },
+        { label: "马上P一套给你（熟练打开PS）", traits: { "WTF": 5, "BOSS": 2 } },
+        { label: "好好好，我这就去办（然后忘记）", traits: { "LAZY": 4, "HOPE": 1 } },
+        { label: "打电话骂客户经理事多", traits: { "DRUNK": 3, "ANXIOUS": 3 } }
+    ] },
+    { text: "你的手机通讯录备注风格？", options: [
+        { label: "XX银行王经理/李行长/赵信贷", traits: { "BOSS": 3, "DRUNK": 2 } },
+        { label: "催收1号，催收2号，催收总部", traits: { "XIAOCHOU": 3, "GHOST": 3 } },
+        { label: "亲亲宝贝/债主大人", traits: { "FOOL": 4, "MUM": 2 } },
+        { label: "不存号码，一律拒接", traits: { "SECRET": 3, "LAZY": 2 } }
+    ] },
+    { text: "如果穿越到古代，你最可能成为？", options: [
+        { label: "骗吃骗喝的江湖骗子", traits: { "BIG-P": 3, "WTF": 2 } },
+        { label: "欠债不还的泼皮无赖", traits: { "XIAOCHOU": 4, "LAZY": 1 } },
+        { label: "被砍头的奸商", traits: { "BOSS": 2, "GAMBLE": 3 } },
+        { label: "卖惨要饭的乞丐", traits: { "DRAMA": 4, "CRYING": 2 } }
+    ] }
+  ];
+
+  // 全局状态
+  let currentAnswers = {};
+  let shuffledQuestions = [];
+
+  const introDiv = document.getElementById('introScreen');
+  const testDiv = document.getElementById('testScreen');
+  const resultDiv = document.getElementById('resultScreen');
+
+  function showScreen(screenName) {
+    introDiv.classList.remove('active');
+    testDiv.classList.remove('active');
+    resultDiv.classList.remove('active');
+    if (screenName === 'intro') introDiv.classList.add('active');
+    else if (screenName === 'test') testDiv.classList.add('active');
+    else if (screenName === 'result') resultDiv.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function shuffleQuestions() {
+    const copy = [...RAW_QUESTIONS];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function renderTest() {
+    const container = document.getElementById('questionsDynamicArea');
+    container.innerHTML = '';
+    shuffledQuestions.forEach((q, idx) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question-item';
+      qDiv.innerHTML = `
+        <div class="q-badge">🎭 贷款人格维度</div>
+        <div class="q-text">${idx+1}. ${q.text}</div>
+        <div class="options-group" id="qgroup-${idx}">
+          ${q.options.map((opt, optIdx) => {
+            const isChecked = (currentAnswers[idx] === optIdx);
+            return `<label class="option-row">
+              <input type="radio" name="q${idx}" value="${optIdx}" ${isChecked ? 'checked' : ''} />
+              <span>${String.fromCharCode(65+optIdx)}. ${opt.label}</span>
+            </label>`;
+          }).join('')}
+        </div>
+      `;
+      container.appendChild(qDiv);
+    });
+
+    for (let i = 0; i < shuffledQuestions.length; i++) {
+      const radios = document.querySelectorAll(`input[name="q${i}"]`);
+      radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const val = parseInt(e.target.value);
+          currentAnswers[i] = val;
+          updateTestProgress();
+        });
+      });
+    }
+    updateTestProgress();
+  }
+
+  function updateTestProgress() {
+    const total = shuffledQuestions.length;
+    const answeredCount = Object.keys(currentAnswers).length;
+    const percent = (answeredCount / total) * 100;
+    const fillEl = document.getElementById('testProgressFill');
+    if (fillEl) fillEl.style.width = `${percent}%`;
+    const counterSpan = document.getElementById('testCounter');
+    if (counterSpan) counterSpan.innerText = `${answeredCount} / ${total}`;
+    const submitBtn = document.getElementById('submitResultBtn');
+    const hintMsg = document.getElementById('testHintMsg');
+    if (answeredCount === total) {
+      submitBtn.disabled = false;
+      if (hintMsg) hintMsg.innerHTML = "🎉 选完了！即将揭晓你的贷款人格，请坐稳扶好。";
+    } else {
+      submitBtn.disabled = true;
+      if (hintMsg) hintMsg.innerHTML = "🤪 继续答题，测测你是哪种奇葩贷款人设。";
+    }
+  }
+
+  function computePersonalityType() {
+    const scoreMap = {};
+    PERSONALITIES.forEach(p => scoreMap[p.code] = 0);
+    for (let i = 0; i < shuffledQuestions.length; i++) {
+      const selectedIdx = currentAnswers[i];
+      if (selectedIdx === undefined) continue;
+      const q = shuffledQuestions[i];
+      const selectedOpt = q.options[selectedIdx];
+      if (selectedOpt && selectedOpt.traits) {
+        for (const [code, points] of Object.entries(selectedOpt.traits)) {
+          if (scoreMap[code] !== undefined) scoreMap[code] += points;
+        }
+      }
+    }
+    let maxCode = null;
+    let maxScore = -1;
+    for (const [code, score] of Object.entries(scoreMap)) {
+      if (score > maxScore) { maxScore = score; maxCode = code; }
+    }
+    if (!maxCode) maxCode = "BIG-P";
+    const matched = PERSONALITIES.find(p => p.code === maxCode) || PERSONALITIES[0];
+    return { personality: matched, scores: scoreMap };
+  }
+
+  function displayResult() {
+    const { personality, scores } = computePersonalityType();
+    document.getElementById('resultFullName').innerHTML = `${personality.name} ${personality.emoji}`;
+    document.getElementById('resultTagline').innerHTML = `“${personality.tagline}”`;
+    document.getElementById('resultDescText').innerHTML = personality.desc;
+    document.getElementById('resultBigEmoji').innerHTML = personality.emoji;
+    document.getElementById('resultPosterLine').innerHTML = `${personality.name} · 贷款界顶流`;
+    document.getElementById('funnyAdviceText').innerHTML = `💢 给${personality.name}的放款建议：${personality.advice}<br><span style="font-size:12px;">⚠️ 本建议不具备任何法律效力，仅供笑料。</span>`;
+    const randomMatch = Math.floor(Math.random() * 15 + 83);
+    document.getElementById('resultMatchBadge').innerHTML = `匹配度 ${randomMatch}% · 离谱认证`;
+
+    const paintScore = Math.min(95, (scores["BIG-P"] || 0) * 5 + 28);
+    const irritateScore = Math.min(95, (scores["ANXIOUS"] || 0) * 6 + 22);
+    const escapeScore = Math.min(98, (scores["GHOST"] || 0) * 7 + (scores["XIAOCHOU"] || 0) * 4);
+    let willScore = 68 - ((scores["LAZY"] || 0) * 3) - ((scores["XIAOCHOU"] || 0) * 2);
+    willScore = Math.min(88, Math.max(12, willScore));
+    const dimensions = [
+      { name: "🤥 画饼指数", score: paintScore },
+      { name: "😤 暴躁指数", score: irritateScore },
+      { name: "🕵️ 跑路天赋", score: escapeScore },
+      { name: "💸 还款意志", score: willScore }
+    ];
+    const dimContainer = document.getElementById('dimensionsList');
+    dimContainer.innerHTML = dimensions.map(d => `
+      <div class="dim-item">
+        <div class="dim-header"><span>${d.name}</span><span>${d.score}分</span></div>
+        <div class="dim-bar"><div class="dim-fill" style="width: ${d.score}%;"></div></div>
+        <div class="dim-caption">${d.score > 70 ? "离谱超标" : "还有救"}</div>
+      </div>
+    `).join('');
+    showScreen('result');
+  }
+
+  function initTest() {
+    currentAnswers = {};
+    shuffledQuestions = shuffleQuestions();
+    renderTest();
+    showScreen('test');
+  }
+
+  document.getElementById('startTestBtn').addEventListener('click', initTest);
+  document.getElementById('backHomeBtn').addEventListener('click', () => showScreen('intro'));
+  document.getElementById('submitResultBtn').addEventListener('click', displayResult);
+  document.getElementById('restartFromResult').addEventListener('click', initTest);
+  document.getElementById('goHomeFromResult').addEventListener('click', () => showScreen('intro'));
+</script>
+</body>
+</html>
